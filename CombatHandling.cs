@@ -7,13 +7,12 @@ namespace CombatHandlingNS
         public List<Enemy> enemies = new List<Enemy>();
         private Player player;
         private int progress; // numero di porte aperte
-        private int playerDefenceMultiplier = 1;
-        private int enemyDefenceMultiplier = 1;
 
         public CombatHandling(Player player, int progress)
         {
             this.player = player;
             this.progress = progress;
+            GenerateEnemies();
         }
 
         private void GenerateEnemies()
@@ -34,7 +33,7 @@ namespace CombatHandlingNS
             }
         }
 
-        private void handleAttack(Entity attaccker, Entity defender)
+        private bool handleAttack(Entity attaccker, Entity defender)
         {
             bool alive = defender.DecreaseHealthBy(attaccker.attack - defender.defence * defender.defenceMultiplier);
             
@@ -45,7 +44,7 @@ namespace CombatHandlingNS
         }
 
         // return = 0 -> continua; 1 -> fine stanza; 2 -> morto giocatore
-        // actions = 1 -> attacco; 2 -> difesa
+        // actions = 0 -> niente; 1 -> attacco; 2 -> difesa
         public int Turn(int playerAction)
         {
             Enemy currentEnemy = this.enemies[0];
@@ -53,13 +52,18 @@ namespace CombatHandlingNS
             int enemyAction = random.Next(1, 3);
             bool alive = true;
 
-            if (playerAction == 1)
+            switch (playerAction)
             {
-                alive = handleAttack(player, currentEnemy);
-            }
-            else if (playerAction == 2)
-            {
-                player.defenceMultiplier = 2;
+                case 0:
+                    break;
+                case 1:
+                    alive = handleAttack(player, currentEnemy);
+                    break;
+                case 2:
+                    player.defenceMultiplier = 2;
+                    break;
+                default:
+                    throw new Exception("Invalid action int");
             }
 
             // player dead
@@ -68,13 +72,18 @@ namespace CombatHandlingNS
                 return 2;
             }
 
-            if (enemyAction == 1)
+            switch (enemyAction)
             {
-                alive = handleAttack(currentEnemy, player);
-            }
-            else if (enemyAction == 2)
-            {
-                enemyDefenceMultiplier = 2;
+                case 0:
+                    break;
+                case 1:
+                    alive = handleAttack(currentEnemy, player);
+                    break;
+                case 2:
+                    currentEnemy.defenceMultiplier = 2;
+                    break;
+                default:
+                    throw new Exception("Invalid action int");
             }
 
             // enemy dead
