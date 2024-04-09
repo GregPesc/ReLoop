@@ -34,6 +34,16 @@ namespace CombatHandlingNS
             }
         }
 
+        private void handleAttack(Entity attaccker, Entity defender)
+        {
+            bool alive = defender.DecreaseHealthBy(attaccker.attack - defender.defence * defender.defenceMultiplier);
+            
+            attaccker.defenceMultiplier = 1;
+            defender.defenceMultiplier = 1;
+
+            return alive;
+        }
+
         // return = 0 -> continua; 1 -> fine stanza; 2 -> morto giocatore
         // actions = 1 -> attacco; 2 -> difesa
         public int Turn(int playerAction)
@@ -45,14 +55,14 @@ namespace CombatHandlingNS
 
             if (playerAction == 1)
             {
-                alive = currentEnemy.DecreaseHealthBy(this.player.attack - currentEnemy.defence * this.enemyDefenceMultiplier);
-                playerDefenceMultiplier = 1;
+                alive = handleAttack(player, currentEnemy);
             }
             else if (playerAction == 2)
             {
-                playerDefenceMultiplier = 2;
+                player.defenceMultiplier = 2;
             }
 
+            // player dead
             if (!alive)
             {
                 return 2;
@@ -60,25 +70,27 @@ namespace CombatHandlingNS
 
             if (enemyAction == 1)
             {
-                alive = this.player.DecreaseHealthBy(currentEnemy.attack - this.player.defence * this.playerDefenceMultiplier);
-                enemyDefenceMultiplier = 1;
+                alive = handleAttack(currentEnemy, player);
             }
             else if (enemyAction == 2)
             {
                 enemyDefenceMultiplier = 2;
             }
 
+            // enemy dead
             if (!alive)
             {
                 this.player.AddExp(currentEnemy.Exp);
                 this.enemies.Remove(currentEnemy);
             }
 
+            // all enemies dead
             if (enemies.Count == 0)
             {
                 return 1;
             }
 
+            // player alive and enemies remaining
             return 0;
         }
     }

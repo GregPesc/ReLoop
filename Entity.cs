@@ -30,6 +30,7 @@ namespace EntityNS
 
         public int attack;
         public int defence;
+        public int defenceMultiplier;
         protected int exp;
         public int Exp
         {
