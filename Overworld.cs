@@ -63,23 +63,32 @@ namespace OverworldNS
             enemyHealth.Name = "enemy_health";
             this.form.Controls.Add(enemyHealth);
 
+            Label enemiesRemaining = new Label();
+            enemiesRemaining.Location = new Point(200, 40);
+            enemiesRemaining.AutoSize = true;
+            enemiesRemaining.Name = "number_of_enemies";
+            this.form.Controls.Add(enemiesRemaining);
+
             this.RefreshInterface();
         }
 
         public void RefreshInterface()
         {
             Label playerHealth = this.form.Controls.Find("player_health", true).FirstOrDefault() as Label;
-            playerHealth.Text = player.Health.ToString();
+            playerHealth.Text = $"Health: {player.Health}";
 
             Label enemyHealth = this.form.Controls.Find("enemy_health", true).FirstOrDefault() as Label;
             try
             {
-                enemyHealth.Text = this.combatHandling.enemies[0].Health.ToString();
+                enemyHealth.Text = $"Health: {this.combatHandling.enemies[0].Health}";
             }
             catch (Exception)
             {
-                enemyHealth.Text = "0";
+                enemyHealth.Text = "Health: 0";
             }
+
+            Label enemiesRemaining = this.form.Controls.Find("number_of_enemies", true).FirstOrDefault() as Label;
+            enemiesRemaining.Text = $"Enemies remaining: {combatHandling.enemies.Count()}";
         }
 
         private void RemoveAll()
@@ -97,7 +106,6 @@ namespace OverworldNS
             attackBtn.Enabled = false;
 
             int action = 0;
-            bool disableAll = false;
 
             if (sender is Button)
             {
