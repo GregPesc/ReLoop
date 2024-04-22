@@ -35,7 +35,8 @@ namespace CombatHandlingNS
 
         private bool handleAttack(Entity attaccker, Entity defender)
         {
-            bool alive = defender.DecreaseHealthBy(attaccker.attack - defender.defence * defender.defenceMultiplier);
+            // TODO: sistema calcolo dei danni basato su difesa
+            bool alive = defender.DecreaseHealthBy((int)(attaccker.attack * (defender.defence * defender.defenceMultiplier / 100) + attaccker.attack * 0.2));
             
             attaccker.defenceMultiplier = 1;
             defender.defenceMultiplier = 1;
@@ -66,26 +67,6 @@ namespace CombatHandlingNS
                     throw new Exception("Invalid action int");
             }
 
-            // player dead
-            if (!alive)
-            {
-                return 2;
-            }
-
-            switch (enemyAction)
-            {
-                case 0:
-                    break;
-                case 1:
-                    alive = handleAttack(currentEnemy, player);
-                    break;
-                case 2:
-                    currentEnemy.defenceMultiplier = 2;
-                    break;
-                default:
-                    throw new Exception("Invalid action int");
-            }
-
             // enemy dead
             if (!alive)
             {
@@ -93,10 +74,35 @@ namespace CombatHandlingNS
                 this.enemies.Remove(currentEnemy);
             }
 
+            alive = true;
+
             // all enemies dead
-            if (enemies.Count == 0)
+            if (enemies.Count() == 0)
             {
                 return 1;
+            }
+
+            else
+            {
+                switch (enemyAction)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        alive = handleAttack(currentEnemy, player);
+                        break;
+                    case 2:
+                        currentEnemy.defenceMultiplier = 2;
+                        break;
+                    default:
+                        throw new Exception("Invalid action int");
+                }
+            }
+
+            // player dead
+            if (!alive)
+            {
+                return 2;
             }
 
             // player alive and enemies remaining
