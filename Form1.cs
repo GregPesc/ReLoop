@@ -14,7 +14,7 @@ namespace ReLoop
         private void Form1_Load(object sender, EventArgs e)
         {
             this.overworld = new Overworld(this);
-            overworld.GameplayLoop();
+            this.overworld.StartMenu();
         }
     }
 }

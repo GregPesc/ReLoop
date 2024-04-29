@@ -36,7 +36,7 @@ namespace CombatHandlingNS
         private bool handleAttack(Entity attaccker, Entity defender)
         {
             // TODO: sistema calcolo dei danni basato su difesa
-            bool alive = defender.DecreaseHealthBy((int)(attaccker.attack * (defender.defence * defender.defenceMultiplier / 100) + attaccker.attack * 0.2));
+            bool alive = defender.DecreaseHealthBy((int)(attaccker.attack * (1 - (defender.defence * defender.defenceMultiplier / 100)) + 1));
             
             attaccker.defenceMultiplier = 1;
             defender.defenceMultiplier = 1;
