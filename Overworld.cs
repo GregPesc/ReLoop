@@ -6,15 +6,16 @@ namespace OverworldNS
     public class Overworld
     {
         private int progress;
-        private Player player;
-        private Form form;
-        private CombatHandling combatHandling;
+        private readonly Player player;
+        private readonly Form form;
+        private CombatHandling? combatHandling;
 
         public Overworld(Form form)
         {
             this.progress = 0;
             this.player = new Player();
             this.form = form;
+            this.combatHandling = null;
         }
 
         public void GameplayLoop()
@@ -40,7 +41,7 @@ namespace OverworldNS
         {
             this.combatHandling = new CombatHandling(this.player, this.progress);
 
-            // set interface
+            // setup interface
 
             // one time set
             Button attackBtn = new Button();
@@ -93,14 +94,24 @@ namespace OverworldNS
 
         private void RemoveAll()
         {
+            // https://stackoverflow.com/questions/8466343/why-controls-do-not-want-to-get-removed
             foreach (Control item in form.Controls)
             {
-                form.Controls.Remove(item);
+                item.Dispose();
             }
-            this.GameplayLoop();
+            this.form.Update();
         }
 
-        private void HandleClick(object sender, EventArgs e)
+        private void EndGame()
+        {
+            Label label = new Label();
+            label.Text = "Sei morto.";
+            label.Location = new Point(400, 400);
+            label.AutoSize = true;
+            this.form.Controls.Add(label);
+        }
+
+        private void HandleClick(object? sender, EventArgs e)
         {
             Button attackBtn = this.form.Controls.Find("attack_btn", true).FirstOrDefault() as Button;
             attackBtn.Enabled = false;
@@ -134,13 +145,14 @@ namespace OverworldNS
                         win.Update();
                         Thread.Sleep(1000);
                         this.RemoveAll();
+                        this.GameplayLoop();
                         break;
                     case 2:
-                        throw new Exception("Player dead");
+                        this.RemoveAll();
+                        this.EndGame();
                         break;
                     default:
                         throw new Exception("Invalid gameState");
-                        break;
                 }
             }
             attackBtn.Enabled = true;
