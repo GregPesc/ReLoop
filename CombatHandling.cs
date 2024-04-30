@@ -4,14 +4,14 @@ namespace CombatHandlingNS
 {
     class CombatHandling
     {
-        public List<Enemy> enemies = new List<Enemy>();
-        private Player player;
         private int progress; // numero di porte aperte
+        private Player player;
+        public List<Enemy> enemies = new List<Enemy>();
 
         public CombatHandling(Player player, int progress)
         {
-            this.player = player;
             this.progress = progress;
+            this.player = player;
             GenerateEnemies();
         }
 
@@ -27,7 +27,7 @@ namespace CombatHandlingNS
                 int health = maxHealth;
                 int attack = random.Next(5, 15) * this.progress;
                 int defence = random.Next(5, 15) * this.progress;
-                int exp = random.Next(5, 20);
+                int exp = random.Next(5, 20) * (this.progress + 10) / 10;
 
                 enemies.Add(new Enemy(maxHealth, health, attack, defence, exp));
             }
@@ -35,8 +35,9 @@ namespace CombatHandlingNS
 
         private bool handleAttack(Entity attaccker, Entity defender)
         {
-            // TODO: sistema calcolo dei danni basato su difesa
-            bool alive = defender.DecreaseHealthBy((int)(attaccker.attack * (1 - (defender.defence * defender.defenceMultiplier / 100)) + 1));
+            // https://www.reddit.com/r/gamedesign/comments/pxhx8d/what_are_common_damage_formulas_for_games_that/
+            double damageCalculation = attaccker.attack / ((defender.defence * defender.defenceMultiplier + 100) / 100);
+            bool alive = defender.DecreaseHealthBy((int) damageCalculation);
             
             attaccker.defenceMultiplier = 1;
             defender.defenceMultiplier = 1;

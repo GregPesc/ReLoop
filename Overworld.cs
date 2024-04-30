@@ -5,16 +5,16 @@ namespace OverworldNS
 {
     public class Overworld
     {
-        private int progress;
-        private readonly Player player;
         private readonly Form form;
+        private int progress;
+        private Player player;
         private CombatHandling? combatHandling;
 
         public Overworld(Form form)
         {
+            this.form = form;
             this.progress = 0;
             this.player = new Player();
-            this.form = form;
             this.combatHandling = null;
         }
 
@@ -82,11 +82,6 @@ namespace OverworldNS
             this.RefreshInterface();
         }
 
-        private void DefenceBtn_Click(object? sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         public void RefreshInterface()
         {
             Label playerHealth = this.form.Controls.Find("player_health", true).FirstOrDefault() as Label;
@@ -147,6 +142,8 @@ namespace OverworldNS
 
         private void StartGame(object? sender, EventArgs e)
         {
+            this.player = new Player();
+            this.progress = 0;
             this.RemoveAll();
             this.GameplayLoop();
         }
@@ -177,6 +174,8 @@ namespace OverworldNS
                     case 0:
                         break;
                     case 1:
+                        this.player.IncreaseHealthBy(this.player.MaxHealth);
+
                         this.RemoveAll();
                         Label win = new Label();
                         win.Location = new Point(200, 300);
@@ -186,6 +185,7 @@ namespace OverworldNS
                         win.Update();
                         Thread.Sleep(1000);
                         this.RemoveAll();
+                        
                         this.GameplayLoop();
                         break;
                     case 2:

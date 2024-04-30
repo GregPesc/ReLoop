@@ -27,10 +27,26 @@ namespace EntityNS
             }
             return true;
         }
+           
+        // TODO: fix this
+        public void IncreaseHealthBy(int amount)
+        {
+            if (amount > 0)
+            {
+                if (this.health + amount > this.maxHealth)
+                {
+                    this.health += this.maxHealth;
+                }
+                else
+                {
+                    this.health += amount;
+                }
+            }
+        }
 
         public int attack;
         public int defence;
-        public int defenceMultiplier;
+        public int defenceMultiplier = 1;
         protected int exp;
         public int Exp
         {
