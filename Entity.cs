@@ -13,33 +13,30 @@ namespace EntityNS
         {
             get { return health; }
         }
-        // vivo = true, morto = false
         public bool DecreaseHealthBy(int amount)
         {
+            // return: vivo = true, morto = false
             if (amount > 0)
             {
-                this.health -= amount;
+                health -= amount;
             }
 
-            if (this.health <= 0)
+            if (health <= 0)
             {
                 return false;
             }
             return true;
         }
-           
-        // TODO: fix this
+
         public void IncreaseHealthBy(int amount)
         {
             if (amount > 0)
             {
-                if (this.health + amount > this.maxHealth)
+                health += amount;
+
+                if (health > maxHealth)
                 {
-                    this.health += this.maxHealth;
-                }
-                else
-                {
-                    this.health += amount;
+                    health = maxHealth;
                 }
             }
         }
@@ -76,14 +73,14 @@ namespace EntityNS
             this.defence = defence;
             this.exp = exp;
 
-            this.level = 1;
-            this.keys = 0;
+            level = 1;
+            keys = 0;
         }
 
-        public void AddExp(int expGained)
+        public void IncreaseExpBy(int amount)
         {
-            this.exp += expGained;
-            if (this.exp >= 100)
+            exp += amount;
+            if (exp >= 100)
             {
                 LevelUp();
             }
@@ -91,12 +88,17 @@ namespace EntityNS
 
         private void LevelUp()
         {
-            this.maxHealth += 10;
-            this.health = maxHealth;
-            this.attack += 5;
-            this.defence += 5;
-            this.level += 1;
-            this.exp -= 100;
+            maxHealth += 10;
+            health = maxHealth;
+            attack += 5;
+            defence += 5;
+            level += 1;
+            exp -= 100;
+
+            if (exp >= 100)
+            {
+                LevelUp();
+            }
         }
     }
 

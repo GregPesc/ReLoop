@@ -13,8 +13,8 @@ namespace ReLoop
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.overworld = new Overworld(this);
-            this.overworld.StartMenu();
+            overworld = new Overworld(this);
+            overworld.StartMenu();
         }
     }
 }
