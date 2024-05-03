@@ -75,6 +75,16 @@ namespace OverworldNS
             form.Controls.Add(defenceBtn);
 
             // need to refresh
+            Button healBtn = new Button
+            {
+                Name = "heal_btn",
+                Text = "Heal",
+                Location = new Point(300, 100),
+                Size = new Size(50, 50),
+            };
+            healBtn.Click += new EventHandler(HandleClick);
+            form.Controls.Add(healBtn);
+
             Label playerHealth = new Label
             {
                 Name = "player_health",
@@ -104,6 +114,16 @@ namespace OverworldNS
 
         public void RefreshInterface()
         {
+            Button healBtn = form.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
+            if (player.heals == 0)
+            {
+                healBtn.Enabled = false;
+            }
+            else
+            {
+                healBtn.Enabled = true;
+            }
+
             Label playerHealth = form.Controls.Find("player_health", true).FirstOrDefault() as Label ?? throw new Exception("player_health label not found");
             playerHealth.Text = $"Health: {player.Health}";
 
@@ -195,6 +215,10 @@ namespace OverworldNS
                 else if (button.Name == "special_attack_btn")
                 {
                     action = 3;
+                }
+                else if (button.Name == "heal_btn")
+                {
+                    action = 4;
                 }
 
                 int gameState = combatHandling.Turn(action);

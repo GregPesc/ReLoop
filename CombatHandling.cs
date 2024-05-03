@@ -48,7 +48,7 @@ namespace CombatHandlingNS
 
         public int Turn(int playerAction)
         {
-            // actions: 0 = niente;     1 = attacco;        2 = difesa;             3 = special attack
+            // actions: 0 = niente;     1 = attacco;        2 = difesa;             3 = special attack      4 = heal
             // return:  0 = continua;   1 = fine stanza;    2 = morto giocatore
 
             Enemy currentEnemy = enemies[0];
@@ -71,6 +71,11 @@ namespace CombatHandlingNS
                     int bonus = (int)Math.Floor((double)player.Health / 10);
                     player.DecreaseHealthBy(bonus);
                     alive = HandleAttack(player, currentEnemy, bonus);
+                    break;
+                case 4:
+                    player.heals -= 1;
+                    int heal = player.MaxHealth * 42 / 100;
+                    player.IncreaseHealthBy(heal);
                     break;
                 default:
                     throw new Exception("Invalid action int");

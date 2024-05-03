@@ -64,6 +64,7 @@ namespace EntityNS
     {
         public int level;
         public int keys;
+        public int heals;
 
         public Player(int maxHealth = 100, int health = 100, int attack = 10, int defence = 10, int exp = 0) : base(maxHealth, health, attack, defence, exp)
         {
@@ -75,6 +76,7 @@ namespace EntityNS
 
             level = 1;
             keys = 0;
+            heals = 0;
         }
 
         public void IncreaseExpBy(int amount)
