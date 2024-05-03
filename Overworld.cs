@@ -44,6 +44,16 @@ namespace OverworldNS
             // setup interface
 
             // one time set
+            Button specialAttackBtn = new Button
+            {
+                Name = "special_attack_btn",
+                Text = "SpAtk",
+                Location = new Point(0, 100),
+                Size = new Size(50, 50),
+            };
+            specialAttackBtn.Click += new EventHandler(HandleClick);
+            form.Controls.Add(specialAttackBtn);
+
             Button attackBtn = new Button
             {
                 Name = "attack_btn",
@@ -181,6 +191,10 @@ namespace OverworldNS
                 else if (button.Name == "defence_btn")
                 {
                     action = 2;
+                }
+                else if (button.Name == "special_attack_btn")
+                {
+                    action = 3;
                 }
 
                 int gameState = combatHandling.Turn(action);

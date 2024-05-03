@@ -34,10 +34,10 @@ namespace CombatHandlingNS
             }
         }
 
-        private static bool HandleAttack(Entity attaccker, Entity defender)
+        private static bool HandleAttack(Entity attaccker, Entity defender, int bonus = 0)
         {
             // formula taken from: https://redd.it/pxhx8d
-            double damageCalculation = attaccker.attack / ((defender.defence * defender.defenceMultiplier + 100) / 100);
+            double damageCalculation = (attaccker.attack + bonus * 1.5) / ((defender.defence * defender.defenceMultiplier + 100) / 100);
             bool alive = defender.DecreaseHealthBy((int)damageCalculation);
 
             attaccker.defenceMultiplier = 1;
@@ -48,7 +48,7 @@ namespace CombatHandlingNS
 
         public int Turn(int playerAction)
         {
-            // actions: 0 = niente;     1 = attacco;        2 = difesa
+            // actions: 0 = niente;     1 = attacco;        2 = difesa;             3 = special attack
             // return:  0 = continua;   1 = fine stanza;    2 = morto giocatore
 
             Enemy currentEnemy = enemies[0];
@@ -65,6 +65,12 @@ namespace CombatHandlingNS
                     break;
                 case 2:
                     player.defenceMultiplier = 2;
+                    break;
+                case 3:
+                    // 10% of health removed, converted into bonus damage
+                    int bonus = (int)Math.Floor((double)player.Health / 10);
+                    player.DecreaseHealthBy(bonus);
+                    alive = HandleAttack(player, currentEnemy, bonus);
                     break;
                 default:
                     throw new Exception("Invalid action int");
