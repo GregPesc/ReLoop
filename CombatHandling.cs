@@ -74,7 +74,7 @@ namespace CombatHandlingNS
                     break;
                 case 4:
                     player.heals -= 1;
-                    int heal = player.MaxHealth * 42 / 100;
+                    int heal = player.maxHealth * 42 / 100;
                     player.IncreaseHealthBy(heal);
                     break;
                 default:

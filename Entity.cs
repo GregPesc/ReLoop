@@ -1,13 +1,92 @@
 namespace EntityNS
 {
-    public class Entity
+    public class TreasureRoom
     {
-        protected int maxHealth;
-        public int MaxHealth
+        public List<Treasure> Treasures = new List<Treasure>();
+
+        public TreasureRoom()
         {
-            get { return maxHealth; }
+            GenerateTreasures();
         }
 
+        private void GenerateTreasures()
+        {
+            Random random = new Random();
+            int numberOfTreasures = random.Next(1, 4);
+
+            for (int i = 0; i < numberOfTreasures; i++)
+            {
+                Treasures.Add(new Treasure(random.Next(0, 3), i));
+            }
+        }
+    }
+
+    public class Treasure
+    {
+        // 0 = niente; 1 = buff/oggetto; 2 = nemico
+        public int id;
+        public int type;
+        public string? name = null;
+        public string? stat = null;
+        public int amount = 0;
+        public Action<Player>? action = null;
+
+        public Treasure(int type, int id)
+        {
+            this.type = type;
+            action = GenerateContents();
+            this.id = id;
+        }
+
+        private Action<Player>? GenerateContents()
+        {
+            if (type == 0)
+            {
+                name = "Niente";
+                return (player) => { };
+            }
+            else if (type == 1)
+            {
+                name = "Un buff";
+                Random random = new Random();
+                int stat = random.Next(0, 5);
+                amount = random.Next(2, 5);
+                return stat switch
+                {
+                    0 => (player) => { player.maxHealth += amount * 5; }
+
+                    ,
+                    1 => (player) => { player.attack += amount * 2; }
+
+                    ,
+                    2 => (player) => { player.defence += amount * 2; }
+
+                    ,
+                    3 => (player) => { player.IncreaseExpBy(amount * 8); }
+
+                    ,
+                    4 => (player) => { player.heals += 1; }
+
+                    ,
+                    _ => throw new NotImplementedException("treasure stat not valid"),
+                };
+            }
+            else if (type == 2)
+            {
+                return null;
+            }
+            throw new NotImplementedException("treasuer type not valid");
+        }
+
+        public Action<Player>? Open()
+        {
+            return action;
+        }
+    }
+
+    public class Entity
+    {
+        public int maxHealth;
         protected int health;
         public int Health
         {

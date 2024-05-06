@@ -9,6 +9,7 @@ namespace OverworldNS
         private int progress;
         private Player player;
         private CombatHandling? combatHandling;
+        private TreasureRoom? treasureRoom;
 
         public Overworld(Form form)
         {
@@ -18,26 +19,46 @@ namespace OverworldNS
             combatHandling = null;
         }
 
-        public void GameplayLoop()
+        private void GameplayLoop()
         {
             GenerateRoom();
         }
 
-        public void GenerateRoom()
+        private void GenerateRoom()
         {
             progress += 1;
             Random random = new Random();
-            int rnd = random.Next(0, 1);
+            int rnd = random.Next(0, 2);
 
             if (rnd == 0)
             {
                 CombatRoom();
             }
-
-            // TODO: altri tipi di stanze
+            else if (rnd == 1)
+            {
+                TreasureRoom();
+            }
         }
 
-        public void CombatRoom()
+        private void TreasureRoom()
+        {
+            treasureRoom = new TreasureRoom();
+            for (int i = 0; i < treasureRoom.Treasures.Count; i++)
+            {
+                Button treasure_btn = new Button
+                {
+                    Name = "treasure_" + treasureRoom.Treasures[i].id,
+                    Text = "Tesoro",
+                    Location = new Point(50 + 100 * i, 100),
+                    Size = new Size(50, 50),
+                };
+                treasure_btn.Click += new EventHandler(HandleClick);
+
+                form.Controls.Add(treasure_btn);
+            }
+        }
+
+        private void CombatRoom()
         {
             combatHandling = new CombatHandling(player, progress);
 
@@ -112,7 +133,7 @@ namespace OverworldNS
             RefreshInterface();
         }
 
-        public void RefreshInterface()
+        private void RefreshInterface()
         {
             Button healBtn = form.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
             if (player.heals == 0)
@@ -141,7 +162,7 @@ namespace OverworldNS
             enemiesRemaining.Text = $"Enemies remaining: {combatHandling.enemies.Count()}";
         }
 
-        public void RemoveAll()
+        private void RemoveAll()
         {
             // https://stackoverflow.com/questions/8466343/why-controls-do-not-want-to-get-removed
             while (form.Controls.Count > 0)
@@ -196,9 +217,6 @@ namespace OverworldNS
 
         private void HandleClick(object? sender, EventArgs e)
         {
-            Button attackBtn = form.Controls.Find("attack_btn", true).FirstOrDefault() as Button ?? throw new Exception("attack_btn button not found");
-            attackBtn.Enabled = false;
-
             int action = 0;
 
             if (sender is Button)
@@ -220,6 +238,32 @@ namespace OverworldNS
                 {
                     action = 4;
                 }
+                else if (button.Name.Contains("treasure"))
+                {
+                    Treasure treasure = treasureRoom.Treasures.Find(x => x.id == Convert.ToInt32(button.Name.Split("_")[1]));
+                    form.Controls.Remove(button);
+                    Action<Player>? post_open_effect = treasure.Open();
+                    if (post_open_effect != null)
+                    {
+                        Label item = new Label
+                        {
+                            Name = "item_lbl",
+                            Text = $"Hai trovato un oggetto che ti aumenta una statistica!",
+                            Location = new Point(200, 200),
+                            AutoSize = true,
+                        };
+                        form.Controls.Add(item);
+                        post_open_effect(player);
+                    }
+                    else
+                    {
+                        // null = nemico
+                        RemoveAll();
+                        CombatRoom();
+                    }
+
+                    goto SkipToEnd;
+                }
 
                 int gameState = combatHandling.Turn(action);
                 RefreshInterface();
@@ -228,7 +272,7 @@ namespace OverworldNS
                     case 0:
                         break;
                     case 1:
-                        player.IncreaseHealthBy(player.MaxHealth);
+                        player.IncreaseHealthBy(player.maxHealth);
 
                         RemoveAll();
                         Label win = new Label
@@ -252,7 +296,7 @@ namespace OverworldNS
                         throw new Exception("Invalid gameState");
                 }
             }
-            attackBtn.Enabled = true;
+            SkipToEnd:;
         }
     }
 }
