@@ -1,5 +1,6 @@
 using EntityNS;
 using CombatHandlingNS;
+using System.Windows.Forms;
 
 namespace OverworldNS
 {
@@ -10,6 +11,7 @@ namespace OverworldNS
         private Player player;
         private CombatHandling? combatHandling;
         private TreasureRoom? treasureRoom;
+        private TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
 
         public Overworld(Form form)
         {
@@ -65,46 +67,63 @@ namespace OverworldNS
             // setup interface
 
             // one time set
+            tableLayoutPanel.GrowStyle = TableLayoutPanelGrowStyle.AddRows;
+            tableLayoutPanel.ColumnCount = 2;
+            tableLayoutPanel.RowCount = 2;
+
+            float collpcent = 100.0f / 2;
+            float rowpcent = 100.0f / 2;
+
+            tableLayoutPanel.Size = new Size(960 - 100, 544 / 2 - 50);
+            tableLayoutPanel.Location = new Point(50, 544 / 2);
+
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, collpcent));
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, collpcent));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, rowpcent));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, rowpcent));
+
+            tableLayoutPanel.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
+
+            tableLayoutPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left;
+
+            form.Controls.Add(tableLayoutPanel);
+
             Button specialAttackBtn = new Button
             {
                 Name = "special_attack_btn",
                 Text = "SpAtk",
-                Location = new Point(0, 100),
-                Size = new Size(50, 50),
+                Dock = DockStyle.Fill,
             };
             specialAttackBtn.Click += new EventHandler(HandleClick);
-            form.Controls.Add(specialAttackBtn);
+            tableLayoutPanel.Controls.Add(specialAttackBtn, 0, 0);
 
             Button attackBtn = new Button
             {
                 Name = "attack_btn",
                 Text = "Atk",
-                Location = new Point(100, 100),
-                Size = new Size(50, 50),
+                Dock = DockStyle.Fill,
             };
             attackBtn.Click += new EventHandler(HandleClick);
-            form.Controls.Add(attackBtn);
+            tableLayoutPanel.Controls.Add(attackBtn, 1, 0);
 
             Button defenceBtn = new Button
             {
                 Name = "defence_btn",
                 Text = "Def",
-                Location = new Point(200, 100),
-                Size = new Size(50, 50),
+                Dock = DockStyle.Fill,
             };
             defenceBtn.Click += new EventHandler(HandleClick);
-            form.Controls.Add(defenceBtn);
+            tableLayoutPanel.Controls.Add(defenceBtn, 0, 1);
 
             // need to refresh
             Button healBtn = new Button
             {
                 Name = "heal_btn",
                 Text = "Heal",
-                Location = new Point(300, 100),
-                Size = new Size(50, 50),
+                Dock = DockStyle.Fill,
             };
             healBtn.Click += new EventHandler(HandleClick);
-            form.Controls.Add(healBtn);
+            tableLayoutPanel.Controls.Add(healBtn, 1, 1);
 
             Label playerHealth = new Label
             {
@@ -135,7 +154,7 @@ namespace OverworldNS
 
         private void RefreshInterface()
         {
-            Button healBtn = form.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
+            Button healBtn = tableLayoutPanel.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
             if (player.heals == 0)
             {
                 healBtn.Enabled = false;
