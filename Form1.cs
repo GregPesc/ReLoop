@@ -1,5 +1,4 @@
 using OverworldNS;
-using System.Windows.Forms;
 
 namespace ReLoop
 {
@@ -21,11 +20,11 @@ namespace ReLoop
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            if (overworld != null && overworld.tableLayoutPanel != null)
+            if (overworld != null && overworld.ActionsLayout != null)
             {
 
-                overworld.tableLayoutPanel.Size = new Size(this.ClientSize.Width - 100, this.ClientSize.Height / 2 - 50);
-                overworld.tableLayoutPanel.Location = new Point(50, this.ClientSize.Height / 2);
+                overworld.ActionsLayout.Size = new Size(this.ClientSize.Width - 100, this.ClientSize.Height / 2 - 50);
+                overworld.ActionsLayout.Location = new Point(50, this.ClientSize.Height / 2);
             }
         }
     }

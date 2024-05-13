@@ -1,6 +1,5 @@
 using EntityNS;
 using CombatHandlingNS;
-using System.Security.Cryptography;
 
 namespace OverworldNS
 {
@@ -11,7 +10,8 @@ namespace OverworldNS
         private Player player;
         private CombatHandling? combatHandling;
         private TreasureRoom? treasureRoom;
-        public TableLayoutPanel tableLayoutPanel = null;
+        public TableLayoutPanel? ActionsLayout = null;
+        public TableLayoutPanel? PlayerStatsLayout = null;
 
         public Overworld(Form form)
         {
@@ -67,27 +67,22 @@ namespace OverworldNS
             // setup interface
 
             // one time set
-            tableLayoutPanel = new TableLayoutPanel();
-            tableLayoutPanel.GrowStyle = TableLayoutPanelGrowStyle.AddRows;
-            tableLayoutPanel.ColumnCount = 2;
-            tableLayoutPanel.RowCount = 2;
+            ActionsLayout = new TableLayoutPanel();
+            ActionsLayout.GrowStyle = TableLayoutPanelGrowStyle.AddRows;
+            ActionsLayout.ColumnCount = 2;
+            ActionsLayout.RowCount = 2;
 
-            float collpcent = 100.0f / 2;
-            float rowpcent = 100.0f / 2;
+            ActionsLayout.Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height / 2 - 50);
+            ActionsLayout.Location = new Point(50, form.ClientSize.Height / 2);
 
-            tableLayoutPanel.Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height / 2 - 50);
-            tableLayoutPanel.Location = new Point(50, form.ClientSize.Height / 2);
+            ActionsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            ActionsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            ActionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            ActionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
 
-            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, collpcent));
-            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, collpcent));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, rowpcent));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, rowpcent));
+            ActionsLayout.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left;
 
-            tableLayoutPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left;
-
-            form.Controls.Add(tableLayoutPanel);
-
-            tableLayoutPanel.Invalidate();
+            form.Controls.Add(ActionsLayout);
 
             Button specialAttackBtn = new Button
             {
@@ -96,7 +91,7 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             specialAttackBtn.Click += new EventHandler(HandleClick);
-            tableLayoutPanel.Controls.Add(specialAttackBtn, 0, 0);
+            ActionsLayout.Controls.Add(specialAttackBtn, 0, 0);
 
             Button attackBtn = new Button
             {
@@ -105,7 +100,7 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             attackBtn.Click += new EventHandler(HandleClick);
-            tableLayoutPanel.Controls.Add(attackBtn, 1, 0);
+            ActionsLayout.Controls.Add(attackBtn, 1, 0);
 
             Button defenceBtn = new Button
             {
@@ -114,7 +109,7 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             defenceBtn.Click += new EventHandler(HandleClick);
-            tableLayoutPanel.Controls.Add(defenceBtn, 0, 1);
+            ActionsLayout.Controls.Add(defenceBtn, 0, 1);
 
             // need to refresh
             Button healBtn = new Button
@@ -124,15 +119,41 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             healBtn.Click += new EventHandler(HandleClick);
-            tableLayoutPanel.Controls.Add(healBtn, 1, 1);
+            ActionsLayout.Controls.Add(healBtn, 1, 1);
+
+
+            PlayerStatsLayout = new TableLayoutPanel
+            {
+                GrowStyle = TableLayoutPanelGrowStyle.AddRows,
+                ColumnCount = 2,
+                RowCount = 3,
+                Size = new Size((int)(form.ClientSize.Width * 0.2), form.ClientSize.Height / 2 - 100),
+                Location = new Point(50, 50),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left
+            };
+
+            PlayerStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            PlayerStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            PlayerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            PlayerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            PlayerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+
+            form.Controls.Add(PlayerStatsLayout);
+
+            Label playerHealthText = new Label
+            {
+                Name = "player_health_text",
+                Dock = DockStyle.Fill,
+                Text = "Health:"
+            };
+            PlayerStatsLayout.Controls.Add(playerHealthText, 0, 1);
 
             Label playerHealth = new Label
             {
                 Name = "player_health",
-                Location = new Point(10, 10),
-                AutoSize = true,
+                Dock = DockStyle.Fill
             };
-            form.Controls.Add(playerHealth);
+            PlayerStatsLayout.Controls.Add(playerHealth, 1, 1);
 
             Label enemyHealth = new Label
             {
@@ -155,7 +176,7 @@ namespace OverworldNS
 
         private void RefreshInterface()
         {
-            Button healBtn = tableLayoutPanel.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
+            Button healBtn = ActionsLayout.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
             if (player.heals == 0)
             {
                 healBtn.Enabled = false;
@@ -165,8 +186,8 @@ namespace OverworldNS
                 healBtn.Enabled = true;
             }
 
-            Label playerHealth = form.Controls.Find("player_health", true).FirstOrDefault() as Label ?? throw new Exception("player_health label not found");
-            playerHealth.Text = $"Health: {player.Health}";
+            Label playerHealth = PlayerStatsLayout.Controls.Find("player_health", true).FirstOrDefault() as Label ?? throw new Exception("player_health label not found");
+            playerHealth.Text = $"{player.Health}";
 
             Label enemyHealth = form.Controls.Find("enemy_health", true).FirstOrDefault() as Label ?? throw new Exception("enemy_health label not found");
             try
