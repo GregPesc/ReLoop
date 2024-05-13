@@ -1,6 +1,6 @@
 using EntityNS;
 using CombatHandlingNS;
-using System.Windows.Forms;
+using System.Security.Cryptography;
 
 namespace OverworldNS
 {
@@ -11,7 +11,7 @@ namespace OverworldNS
         private Player player;
         private CombatHandling? combatHandling;
         private TreasureRoom? treasureRoom;
-        private TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
+        public TableLayoutPanel tableLayoutPanel = null;
 
         public Overworld(Form form)
         {
@@ -67,6 +67,7 @@ namespace OverworldNS
             // setup interface
 
             // one time set
+            tableLayoutPanel = new TableLayoutPanel();
             tableLayoutPanel.GrowStyle = TableLayoutPanelGrowStyle.AddRows;
             tableLayoutPanel.ColumnCount = 2;
             tableLayoutPanel.RowCount = 2;
@@ -74,19 +75,19 @@ namespace OverworldNS
             float collpcent = 100.0f / 2;
             float rowpcent = 100.0f / 2;
 
-            tableLayoutPanel.Size = new Size(960 - 100, 544 / 2 - 50);
-            tableLayoutPanel.Location = new Point(50, 544 / 2);
+            tableLayoutPanel.Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height / 2 - 50);
+            tableLayoutPanel.Location = new Point(50, form.ClientSize.Height / 2);
 
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, collpcent));
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, collpcent));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, rowpcent));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, rowpcent));
-
-            tableLayoutPanel.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble;
 
             tableLayoutPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left;
 
             form.Controls.Add(tableLayoutPanel);
+
+            tableLayoutPanel.Invalidate();
 
             Button specialAttackBtn = new Button
             {
@@ -262,6 +263,7 @@ namespace OverworldNS
                     Treasure treasure = treasureRoom.Treasures.Find(x => x.id == Convert.ToInt32(button.Name.Split("_")[1]));
                     form.Controls.Remove(button);
                     Action<Player>? post_open_effect = treasure.Open();
+                    treasureRoom.Treasures.Remove(treasure);
                     if (post_open_effect != null)
                     {
                         Label item = new Label
@@ -273,6 +275,12 @@ namespace OverworldNS
                         };
                         form.Controls.Add(item);
                         post_open_effect(player);
+
+                        if (treasureRoom.Treasures.Count() == 0)
+                        {
+                            RemoveAll();
+                            GameplayLoop();
+                        }
                     }
                     else
                     {

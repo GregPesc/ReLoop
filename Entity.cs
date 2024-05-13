@@ -23,8 +23,8 @@ namespace EntityNS
 
     public class Treasure
     {
-        // 0 = niente; 1 = buff/oggetto; 2 = nemico
         public int id;
+        // 0 = niente; 1 = buff/oggetto; 2 = nemico
         public int type;
         public string? name = null;
         public string? stat = null;
@@ -75,7 +75,7 @@ namespace EntityNS
             {
                 return null;
             }
-            throw new NotImplementedException("treasuer type not valid");
+            throw new NotImplementedException("treasure type not valid");
         }
 
         public Action<Player>? Open()
