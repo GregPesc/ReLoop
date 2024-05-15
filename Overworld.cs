@@ -13,6 +13,9 @@ namespace OverworldNS
         public TableLayoutPanel? ActionsLayout = null;
         public TableLayoutPanel? PlayerStatsLayout = null;
         public TableLayoutPanel? EnemyStatsLayout = null;
+        private const int doorsCount = 12;
+        private int currentScreen = 0;
+        private bool[] openedDoors = new bool[doorsCount];
 
         public Overworld(Form form)
         {
@@ -24,7 +27,17 @@ namespace OverworldNS
 
         private void GameplayLoop()
         {
-            GenerateRoom();
+            if (currentScreen == 4)
+            {
+                // porta del boss
+            }
+            else
+            {
+                // porte da mostrare:
+                // da currentScreen * 3 a currentScreen * 3 + 2
+
+
+            }
         }
 
         private void GenerateRoom()
