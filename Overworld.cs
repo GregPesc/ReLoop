@@ -12,6 +12,7 @@ namespace OverworldNS
         private TreasureRoom? treasureRoom;
         public TableLayoutPanel? ActionsLayout = null;
         public TableLayoutPanel? PlayerStatsLayout = null;
+        public TableLayoutPanel? EnemyStatsLayout = null;
 
         public Overworld(Form form)
         {
@@ -80,7 +81,7 @@ namespace OverworldNS
             ActionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
             ActionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
 
-            ActionsLayout.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left;
+            ActionsLayout.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
 
             form.Controls.Add(ActionsLayout);
 
@@ -129,7 +130,7 @@ namespace OverworldNS
                 RowCount = 3,
                 Size = new Size((int)(form.ClientSize.Width * 0.2), form.ClientSize.Height / 2 - 100),
                 Location = new Point(50, 50),
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Left
+                Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
 
             PlayerStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
@@ -139,6 +140,21 @@ namespace OverworldNS
             PlayerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
 
             form.Controls.Add(PlayerStatsLayout);
+
+            Label playerLevelText = new Label
+            {
+                Name = "player_level_text",
+                Dock = DockStyle.Fill,
+                Text = "Level:"
+            };
+            PlayerStatsLayout.Controls.Add(playerLevelText, 0, 0);
+
+            Label playerLevel = new Label
+            {
+                Name = "player_level",
+                Dock = DockStyle.Fill,
+            };
+            PlayerStatsLayout.Controls.Add(playerLevel, 1, 0);
 
             Label playerHealthText = new Label
             {
@@ -155,21 +171,68 @@ namespace OverworldNS
             };
             PlayerStatsLayout.Controls.Add(playerHealth, 1, 1);
 
+            Label playerHealsText = new Label
+            {
+                Name = "player_heals_text",
+                Dock = DockStyle.Fill,
+                Text = "Cure:"
+            };
+            PlayerStatsLayout.Controls.Add(playerHealsText, 0, 2);
+
+            Label playerHeals = new Label
+            {
+                Name = "player_heals",
+                Dock = DockStyle.Fill,
+            };
+            PlayerStatsLayout.Controls.Add(playerHeals, 1, 2);
+
+
+            EnemyStatsLayout = new TableLayoutPanel
+            {
+                GrowStyle = TableLayoutPanelGrowStyle.AddRows,
+                ColumnCount = 2,
+                RowCount = 3,
+                Size = new Size((int)(form.ClientSize.Width * 0.2), form.ClientSize.Height / 2 - 100),
+                Location = new Point(form.ClientSize.Width - 50 - ((int)(form.ClientSize.Width * 0.2)), 50),
+                Anchor =  AnchorStyles.Right | AnchorStyles.Top
+            };
+
+            EnemyStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            EnemyStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            EnemyStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            EnemyStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+
+            form.Controls.Add(EnemyStatsLayout);
+
+            Label enemyHealthText = new Label
+            {
+                Name = "enemy_health_text",
+                Dock = DockStyle.Fill,
+                Text = "Health"
+            };
+            EnemyStatsLayout.Controls.Add(enemyHealthText, 0, 0);
+
             Label enemyHealth = new Label
             {
                 Name = "enemy_health",
-                Location = new Point(200, 10),
-                AutoSize = true,
+                Dock = DockStyle.Fill,
             };
-            form.Controls.Add(enemyHealth);
+            EnemyStatsLayout.Controls.Add(enemyHealth, 1, 0);
+
+            Label enemiesRemainingText = new Label
+            {
+                Name = "number_of_enemies_text",
+                Dock = DockStyle.Fill,
+                Text = "Enemies remaining"
+            };
+            EnemyStatsLayout.Controls.Add(enemiesRemainingText, 0, 1);
 
             Label enemiesRemaining = new Label
             {
                 Name = "number_of_enemies",
-                Location = new Point(200, 40),
-                AutoSize = true,
+                Dock = DockStyle.Fill
             };
-            form.Controls.Add(enemiesRemaining);
+            EnemyStatsLayout.Controls.Add(enemiesRemaining, 1, 1);
 
             RefreshInterface();
         }
@@ -189,18 +252,24 @@ namespace OverworldNS
             Label playerHealth = PlayerStatsLayout.Controls.Find("player_health", true).FirstOrDefault() as Label ?? throw new Exception("player_health label not found");
             playerHealth.Text = $"{player.Health}";
 
-            Label enemyHealth = form.Controls.Find("enemy_health", true).FirstOrDefault() as Label ?? throw new Exception("enemy_health label not found");
+            Label playerLevel = PlayerStatsLayout.Controls.Find("player_level", true).FirstOrDefault() as Label ?? throw new Exception("player_level label not found");
+            playerLevel.Text = $"{player.level}";
+
+            Label playerHeals = PlayerStatsLayout.Controls.Find("player_heals", true).FirstOrDefault() as Label ?? throw new Exception("player_heals label not found");
+            playerHeals.Text = $"{player.heals}";
+
+            Label enemyHealth = EnemyStatsLayout.Controls.Find("enemy_health", true).FirstOrDefault() as Label ?? throw new Exception("enemy_health label not found");
             try
             {
-                enemyHealth.Text = $"Health: {combatHandling.enemies[0].Health}";
+                enemyHealth.Text = $"{combatHandling.enemies[0].Health}";
             }
             catch (Exception)
             {
                 enemyHealth.Text = "Health: 0";
             }
 
-            Label enemiesRemaining = form.Controls.Find("number_of_enemies", true).FirstOrDefault() as Label ?? throw new Exception("number_of_enemies label not found");
-            enemiesRemaining.Text = $"Enemies remaining: {combatHandling.enemies.Count()}";
+            Label enemiesRemaining = EnemyStatsLayout.Controls.Find("number_of_enemies", true).FirstOrDefault() as Label ?? throw new Exception("number_of_enemies label not found");
+            enemiesRemaining.Text = $"{combatHandling.enemies.Count()}";
         }
 
         private void RemoveAll()
