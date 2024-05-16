@@ -10,9 +10,10 @@ namespace OverworldNS
         private Player player;
         private CombatHandling? combatHandling;
         private TreasureRoom? treasureRoom;
-        public TableLayoutPanel? ActionsLayout = null;
-        public TableLayoutPanel? PlayerStatsLayout = null;
-        public TableLayoutPanel? EnemyStatsLayout = null;
+        public TableLayoutPanel? actionsLayout = null;
+        public TableLayoutPanel? playerStatsLayout = null;
+        public TableLayoutPanel? enemyStatsLayout = null;
+        public TableLayoutPanel? doorLayout = null;
         private const int doorsCount = 12;
         private int currentScreen = 0;
         private bool[] openedDoors = new bool[doorsCount];
@@ -33,9 +34,37 @@ namespace OverworldNS
             }
             else
             {
+                doorLayout = new TableLayoutPanel
+                {
+                    GrowStyle = TableLayoutPanelGrowStyle.AddRows,
+                    ColumnCount = 3,
+                    RowCount = 1,
+                    Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height * 3 / 5),
+                    Location = new Point(50, form.ClientSize.Height * 1 / 4),
+                    Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right,
+                    CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble
+                };
+                doorLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+                doorLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+                doorLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+                doorLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+
+                form.Controls.Add(doorLayout);
+
                 // porte da mostrare:
                 // da currentScreen * 3 a currentScreen * 3 + 2
+                for (int i = currentScreen * 3; i <= currentScreen * 3 + 2; i++)
+                {
+                    PictureBox door = new PictureBox
+                    {
+                        Name = $"door_{i}",
+                        Dock = DockStyle.Fill,
+                        Image = Image.FromFile(@"C:\Users\Studente\Downloads\porta.png"),
+                        SizeMode = PictureBoxSizeMode.Zoom
+                    };
 
+                    doorLayout.Controls.Add(door, i % 3, 0);
+                }
 
             }
         }
@@ -81,22 +110,22 @@ namespace OverworldNS
             // setup interface
 
             // one time set
-            ActionsLayout = new TableLayoutPanel();
-            ActionsLayout.GrowStyle = TableLayoutPanelGrowStyle.AddRows;
-            ActionsLayout.ColumnCount = 2;
-            ActionsLayout.RowCount = 2;
+            actionsLayout = new TableLayoutPanel();
+            actionsLayout.GrowStyle = TableLayoutPanelGrowStyle.AddRows;
+            actionsLayout.ColumnCount = 2;
+            actionsLayout.RowCount = 2;
 
-            ActionsLayout.Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height / 2 - 50);
-            ActionsLayout.Location = new Point(50, form.ClientSize.Height / 2);
+            actionsLayout.Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height / 2 - 50);
+            actionsLayout.Location = new Point(50, form.ClientSize.Height / 2);
 
-            ActionsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
-            ActionsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
-            ActionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
-            ActionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            actionsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            actionsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            actionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            actionsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
 
-            ActionsLayout.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
+            actionsLayout.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
 
-            form.Controls.Add(ActionsLayout);
+            form.Controls.Add(actionsLayout);
 
             Button specialAttackBtn = new Button
             {
@@ -105,7 +134,7 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             specialAttackBtn.Click += new EventHandler(HandleClick);
-            ActionsLayout.Controls.Add(specialAttackBtn, 0, 0);
+            actionsLayout.Controls.Add(specialAttackBtn, 0, 0);
 
             Button attackBtn = new Button
             {
@@ -114,7 +143,7 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             attackBtn.Click += new EventHandler(HandleClick);
-            ActionsLayout.Controls.Add(attackBtn, 1, 0);
+            actionsLayout.Controls.Add(attackBtn, 1, 0);
 
             Button defenceBtn = new Button
             {
@@ -123,7 +152,7 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             defenceBtn.Click += new EventHandler(HandleClick);
-            ActionsLayout.Controls.Add(defenceBtn, 0, 1);
+            actionsLayout.Controls.Add(defenceBtn, 0, 1);
 
             // need to refresh
             Button healBtn = new Button
@@ -133,10 +162,10 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
             };
             healBtn.Click += new EventHandler(HandleClick);
-            ActionsLayout.Controls.Add(healBtn, 1, 1);
+            actionsLayout.Controls.Add(healBtn, 1, 1);
 
 
-            PlayerStatsLayout = new TableLayoutPanel
+            playerStatsLayout = new TableLayoutPanel
             {
                 GrowStyle = TableLayoutPanelGrowStyle.AddRows,
                 ColumnCount = 2,
@@ -146,13 +175,13 @@ namespace OverworldNS
                 Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
 
-            PlayerStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
-            PlayerStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
-            PlayerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
-            PlayerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
-            PlayerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            playerStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            playerStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            playerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            playerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            playerStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
 
-            form.Controls.Add(PlayerStatsLayout);
+            form.Controls.Add(playerStatsLayout);
 
             Label playerLevelText = new Label
             {
@@ -160,14 +189,14 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
                 Text = "Level:"
             };
-            PlayerStatsLayout.Controls.Add(playerLevelText, 0, 0);
+            playerStatsLayout.Controls.Add(playerLevelText, 0, 0);
 
             Label playerLevel = new Label
             {
                 Name = "player_level",
                 Dock = DockStyle.Fill,
             };
-            PlayerStatsLayout.Controls.Add(playerLevel, 1, 0);
+            playerStatsLayout.Controls.Add(playerLevel, 1, 0);
 
             Label playerHealthText = new Label
             {
@@ -175,14 +204,14 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
                 Text = "Health:"
             };
-            PlayerStatsLayout.Controls.Add(playerHealthText, 0, 1);
+            playerStatsLayout.Controls.Add(playerHealthText, 0, 1);
 
             Label playerHealth = new Label
             {
                 Name = "player_health",
                 Dock = DockStyle.Fill
             };
-            PlayerStatsLayout.Controls.Add(playerHealth, 1, 1);
+            playerStatsLayout.Controls.Add(playerHealth, 1, 1);
 
             Label playerHealsText = new Label
             {
@@ -190,32 +219,32 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
                 Text = "Cure:"
             };
-            PlayerStatsLayout.Controls.Add(playerHealsText, 0, 2);
+            playerStatsLayout.Controls.Add(playerHealsText, 0, 2);
 
             Label playerHeals = new Label
             {
                 Name = "player_heals",
                 Dock = DockStyle.Fill,
             };
-            PlayerStatsLayout.Controls.Add(playerHeals, 1, 2);
+            playerStatsLayout.Controls.Add(playerHeals, 1, 2);
 
 
-            EnemyStatsLayout = new TableLayoutPanel
+            enemyStatsLayout = new TableLayoutPanel
             {
                 GrowStyle = TableLayoutPanelGrowStyle.AddRows,
                 ColumnCount = 2,
                 RowCount = 3,
                 Size = new Size((int)(form.ClientSize.Width * 0.2), form.ClientSize.Height / 2 - 100),
                 Location = new Point(form.ClientSize.Width - 50 - ((int)(form.ClientSize.Width * 0.2)), 50),
-                Anchor =  AnchorStyles.Right | AnchorStyles.Top
+                Anchor = AnchorStyles.Right | AnchorStyles.Top
             };
 
-            EnemyStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
-            EnemyStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
-            EnemyStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
-            EnemyStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            enemyStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            enemyStatsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50.0f));
+            enemyStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
+            enemyStatsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0f));
 
-            form.Controls.Add(EnemyStatsLayout);
+            form.Controls.Add(enemyStatsLayout);
 
             Label enemyHealthText = new Label
             {
@@ -223,14 +252,14 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
                 Text = "Health"
             };
-            EnemyStatsLayout.Controls.Add(enemyHealthText, 0, 0);
+            enemyStatsLayout.Controls.Add(enemyHealthText, 0, 0);
 
             Label enemyHealth = new Label
             {
                 Name = "enemy_health",
                 Dock = DockStyle.Fill,
             };
-            EnemyStatsLayout.Controls.Add(enemyHealth, 1, 0);
+            enemyStatsLayout.Controls.Add(enemyHealth, 1, 0);
 
             Label enemiesRemainingText = new Label
             {
@@ -238,21 +267,21 @@ namespace OverworldNS
                 Dock = DockStyle.Fill,
                 Text = "Enemies remaining"
             };
-            EnemyStatsLayout.Controls.Add(enemiesRemainingText, 0, 1);
+            enemyStatsLayout.Controls.Add(enemiesRemainingText, 0, 1);
 
             Label enemiesRemaining = new Label
             {
                 Name = "number_of_enemies",
                 Dock = DockStyle.Fill
             };
-            EnemyStatsLayout.Controls.Add(enemiesRemaining, 1, 1);
+            enemyStatsLayout.Controls.Add(enemiesRemaining, 1, 1);
 
             RefreshInterface();
         }
 
         private void RefreshInterface()
         {
-            Button healBtn = ActionsLayout.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
+            Button healBtn = actionsLayout.Controls.Find("heal_btn", true).FirstOrDefault() as Button ?? throw new Exception("heal_btn button not found");
             if (player.heals == 0)
             {
                 healBtn.Enabled = false;
@@ -262,16 +291,16 @@ namespace OverworldNS
                 healBtn.Enabled = true;
             }
 
-            Label playerHealth = PlayerStatsLayout.Controls.Find("player_health", true).FirstOrDefault() as Label ?? throw new Exception("player_health label not found");
+            Label playerHealth = playerStatsLayout.Controls.Find("player_health", true).FirstOrDefault() as Label ?? throw new Exception("player_health label not found");
             playerHealth.Text = $"{player.Health}";
 
-            Label playerLevel = PlayerStatsLayout.Controls.Find("player_level", true).FirstOrDefault() as Label ?? throw new Exception("player_level label not found");
+            Label playerLevel = playerStatsLayout.Controls.Find("player_level", true).FirstOrDefault() as Label ?? throw new Exception("player_level label not found");
             playerLevel.Text = $"{player.level}";
 
-            Label playerHeals = PlayerStatsLayout.Controls.Find("player_heals", true).FirstOrDefault() as Label ?? throw new Exception("player_heals label not found");
+            Label playerHeals = playerStatsLayout.Controls.Find("player_heals", true).FirstOrDefault() as Label ?? throw new Exception("player_heals label not found");
             playerHeals.Text = $"{player.heals}";
 
-            Label enemyHealth = EnemyStatsLayout.Controls.Find("enemy_health", true).FirstOrDefault() as Label ?? throw new Exception("enemy_health label not found");
+            Label enemyHealth = enemyStatsLayout.Controls.Find("enemy_health", true).FirstOrDefault() as Label ?? throw new Exception("enemy_health label not found");
             try
             {
                 enemyHealth.Text = $"{combatHandling.enemies[0].Health}";
@@ -281,7 +310,7 @@ namespace OverworldNS
                 enemyHealth.Text = "Health: 0";
             }
 
-            Label enemiesRemaining = EnemyStatsLayout.Controls.Find("number_of_enemies", true).FirstOrDefault() as Label ?? throw new Exception("number_of_enemies label not found");
+            Label enemiesRemaining = enemyStatsLayout.Controls.Find("number_of_enemies", true).FirstOrDefault() as Label ?? throw new Exception("number_of_enemies label not found");
             enemiesRemaining.Text = $"{combatHandling.enemies.Count()}";
         }
 
@@ -426,7 +455,7 @@ namespace OverworldNS
                         throw new Exception("Invalid gameState");
                 }
             }
-            SkipToEnd:;
+        SkipToEnd:;
         }
     }
 }

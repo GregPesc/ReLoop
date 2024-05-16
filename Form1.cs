@@ -20,11 +20,11 @@ namespace ReLoop
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            if (overworld != null && overworld.ActionsLayout != null)
+            if (overworld != null && overworld.actionsLayout != null)
             {
 
-                overworld.ActionsLayout.Size = new Size(this.ClientSize.Width - 100, this.ClientSize.Height / 2 - 50);
-                overworld.ActionsLayout.Location = new Point(50, this.ClientSize.Height / 2);
+                overworld.actionsLayout.Size = new Size(this.ClientSize.Width - 100, this.ClientSize.Height / 2 - 50);
+                overworld.actionsLayout.Location = new Point(50, this.ClientSize.Height / 2);
             }
         }
     }
