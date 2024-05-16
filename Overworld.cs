@@ -28,6 +28,15 @@ namespace OverworldNS
 
         private void GameplayLoop()
         {
+            Label instructions = new Label
+            {
+                Name = "instructions",
+                Text = "Usa freccia destra e sinistra per muoverti tra le porte (< >)",
+                AutoSize = true,
+                Location = new Point(100, 50)
+            };
+            form.Controls.Add(instructions);
+
             if (currentScreen == 4)
             {
                 // porta del boss
