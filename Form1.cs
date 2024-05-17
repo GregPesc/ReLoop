@@ -27,5 +27,31 @@ namespace ReLoop
                 overworld.actionsLayout.Location = new Point(50, this.ClientSize.Height / 2);
             }
         }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
+
+            if (e.KeyCode == Keys.Right)
+            {
+                overworld.currentScreen += 1;
+                if (overworld.currentScreen >= 5)
+                {
+                    overworld.currentScreen = 0;
+                }
+            }
+            if (e.KeyCode == Keys.Left)
+            {
+                overworld.currentScreen -= 1;
+                if (overworld.currentScreen < 0)
+                {
+                    overworld.currentScreen = 4;
+                }
+            }
+            overworld.GameplayLoop();
+        }
     }
 }

@@ -32,14 +32,14 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1079, 673);
-            Margin = new Padding(3, 4, 3, 4);
+            ClientSize = new Size(944, 505);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
             SizeChanged += Form1_SizeChanged;
+            KeyDown += Form1_KeyDown;
             ResumeLayout(false);
         }
 

@@ -1,5 +1,6 @@
 using EntityNS;
 using CombatHandlingNS;
+using ReLoop.Properties;
 
 namespace OverworldNS
 {
@@ -15,8 +16,9 @@ namespace OverworldNS
         public TableLayoutPanel? enemyStatsLayout = null;
         public TableLayoutPanel? doorLayout = null;
         private const int doorsCount = 12;
-        private int currentScreen = 0;
+        public int currentScreen = 0;
         private bool[] openedDoors = new bool[doorsCount];
+        public bool onDoorSelectionScreen = false;
 
         public Overworld(Form form)
         {
@@ -26,8 +28,11 @@ namespace OverworldNS
             combatHandling = null;
         }
 
-        private void GameplayLoop()
+        public void GameplayLoop()
         {
+            RemoveAll();
+
+            onDoorSelectionScreen = true;
             Label instructions = new Label
             {
                 Name = "instructions",
@@ -37,28 +42,42 @@ namespace OverworldNS
             };
             form.Controls.Add(instructions);
 
+            doorLayout = new TableLayoutPanel
+            {
+                GrowStyle = TableLayoutPanelGrowStyle.AddRows,
+                ColumnCount = 3,
+                RowCount = 1,
+                Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height * 3 / 5),
+                Location = new Point(50, form.ClientSize.Height * 1 / 4),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble
+            };
+
             if (currentScreen == 4)
             {
                 // porta del boss
+                doorLayout.ColumnCount = 1;
+                doorLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+                doorLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+
+                PictureBox bossDoor = new PictureBox
+                {
+                    Name = "door_boss",
+                    Dock = DockStyle.Fill,
+                    Image = new Bitmap(Resources.porta_boss),
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                };
+
+                bossDoor.Click += new EventHandler(HandleClick);
+
+                doorLayout.Controls.Add(bossDoor);
             }
             else
             {
-                doorLayout = new TableLayoutPanel
-                {
-                    GrowStyle = TableLayoutPanelGrowStyle.AddRows,
-                    ColumnCount = 3,
-                    RowCount = 1,
-                    Size = new Size(form.ClientSize.Width - 100, form.ClientSize.Height * 3 / 5),
-                    Location = new Point(50, form.ClientSize.Height * 1 / 4),
-                    Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right,
-                    CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetDouble
-                };
                 doorLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
                 doorLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
                 doorLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
                 doorLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-
-                form.Controls.Add(doorLayout);
 
                 // porte da mostrare:
                 // da currentScreen * 3 a currentScreen * 3 + 2
@@ -68,18 +87,26 @@ namespace OverworldNS
                     {
                         Name = $"door_{i}",
                         Dock = DockStyle.Fill,
-                        Image = Image.FromFile(@"C:\Users\Studente\Downloads\porta.png"),
-                        SizeMode = PictureBoxSizeMode.Zoom
+                        Image = openedDoors[i] ? new Bitmap(Resources.porta_aperta) : new Bitmap(Resources.porta_chiusa),
+                        SizeMode = PictureBoxSizeMode.Zoom,
                     };
+                    if (openedDoors[i] == false)
+                    {
+                        door.Click += new EventHandler(HandleClick);
+                    }
 
                     doorLayout.Controls.Add(door, i % 3, 0);
                 }
-
             }
+            form.Controls.Add(doorLayout);
         }
 
         private void GenerateRoom()
         {
+            onDoorSelectionScreen = false;
+
+            RemoveAll();
+
             progress += 1;
             Random random = new Random();
             int rnd = random.Next(0, 2);
@@ -378,6 +405,30 @@ namespace OverworldNS
 
         private void HandleClick(object? sender, EventArgs e)
         {
+            if (sender is PictureBox)
+            {
+                PictureBox door = (PictureBox)sender;
+
+                if (door.Name.Contains("boss"))
+                {
+                    if (player.keys >= 3)
+                    {
+                        // genera la stanza del boss
+                    }
+                    else
+                    {
+                        // mostra messaggio che ti serve 3 chiavi
+                    }
+                }
+                else
+                {
+                    int id = Convert.ToInt32(door.Name.Split("_")[1]);
+                    openedDoors[id] = true;
+                    GenerateRoom();
+                }
+            }
+
+
             int action = 0;
 
             if (sender is Button)
