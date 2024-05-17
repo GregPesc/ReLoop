@@ -468,7 +468,7 @@ namespace OverworldNS
                         form.Controls.Add(item);
                         post_open_effect(player);
 
-                        if (treasureRoom.Treasures.Count() == 0)
+                        if (treasureRoom.Treasures.Count == 0)
                         {
                             RemoveAll();
                             GameplayLoop();
