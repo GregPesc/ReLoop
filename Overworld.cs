@@ -157,7 +157,7 @@ namespace OverworldNS
 
             progress += 1;
             Random random = new Random();
-            int rnd = random.Next(0, 2);
+            int rnd = random.Next(1, 2);
 
             if (rnd == 0)
             {
@@ -178,8 +178,8 @@ namespace OverworldNS
                 {
                     Name = "treasure_" + treasureRoom.Treasures[i].id,
                     Text = "Tesoro",
-                    Location = new Point(50 + 100 * i, 100),
-                    Size = new Size(50, 50),
+                    Location = new Point(150 + 150 * i + 50 * (i - 1), 100),
+                    Size = new Size(150, 150),
                     Image = Resources.tesoro,
                     SizeMode = PictureBoxSizeMode.Zoom
                 };
