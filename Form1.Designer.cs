@@ -36,7 +36,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(944, 505);
             Name = "Form1";
-            Text = "Form1";
+            Text = "ReLoop";
             Load += Form1_Load;
             SizeChanged += Form1_SizeChanged;
             KeyDown += Form1_KeyDown;
