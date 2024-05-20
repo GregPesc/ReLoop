@@ -32,7 +32,6 @@ namespace OverworldNS
         {
             progress = 0;
             player = new Player();
-            player.keys += 3;
             currentScreen = 0;
             openedDoors = new bool[doorsCount];
             lastRoomID = -1;
@@ -245,7 +244,7 @@ namespace OverworldNS
             Button healBtn = new Button
             {
                 Name = "heal_btn",
-                Text = "Heal",
+                Text = "Cura",
                 Dock = DockStyle.Fill,
             };
             healBtn.Click += new EventHandler(HandleClick);
@@ -274,7 +273,7 @@ namespace OverworldNS
             {
                 Name = "player_level_text",
                 Dock = DockStyle.Fill,
-                Text = "Level:"
+                Text = "Livello:"
             };
             playerStatsLayout.Controls.Add(playerLevelText, 0, 0);
 
@@ -289,7 +288,7 @@ namespace OverworldNS
             {
                 Name = "player_health_text",
                 Dock = DockStyle.Fill,
-                Text = "Health:"
+                Text = "Vita:"
             };
             playerStatsLayout.Controls.Add(playerHealthText, 0, 1);
 
@@ -337,7 +336,7 @@ namespace OverworldNS
             {
                 Name = "enemy_health_text",
                 Dock = DockStyle.Fill,
-                Text = "Health"
+                Text = "Vita:"
             };
             enemyStatsLayout.Controls.Add(enemyHealthText, 0, 0);
 
@@ -352,7 +351,7 @@ namespace OverworldNS
             {
                 Name = "number_of_enemies_text",
                 Dock = DockStyle.Fill,
-                Text = "Enemies remaining"
+                Text = "Nemici rimanenti:"
             };
             enemyStatsLayout.Controls.Add(enemiesRemainingText, 0, 1);
 
@@ -452,7 +451,7 @@ namespace OverworldNS
 
             Button quit = new Button
             {
-                Text = "Quit",
+                Text = "Esci",
                 Size = new Size(100, 100),
                 Location = new Point(500, 200)
             };
@@ -511,7 +510,7 @@ namespace OverworldNS
                         Label item = new Label
                         {
                             Name = "item_lbl",
-                            Text = $"Hai trovato un oggetto che ti aumenta una statistica!",
+                            Text = "Hai trovato un oggetto che ti aumenta una statistica!",
                             Location = new Point(200, 200),
                             AutoSize = true,
                         };
