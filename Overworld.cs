@@ -19,18 +19,65 @@ namespace OverworldNS
         public int currentScreen = 0;
         private bool[] openedDoors = new bool[doorsCount];
         public bool onDoorSelectionScreen = false;
+        private List<int> roomsWithKeys = new List<int>();
+        private int lastRoomID = -1;
 
         public Overworld(Form form)
         {
             this.form = form;
+        }
+
+        private void StartGame(object? sender, EventArgs e)
+        {
             progress = 0;
             player = new Player();
-            combatHandling = null;
+            currentScreen = 0;
+            openedDoors = new bool[doorsCount];
+            lastRoomID = -1;
+            List<int> rooms = new();
+            for (int i = 0; i < doorsCount; i++)
+            {
+                rooms.Add(i);
+            }
+
+            Random rnd = new Random();
+            for (int i = 0; i < 3; i++)
+            {
+                int num = rnd.Next(rooms.Count);
+                roomsWithKeys.Add(rooms.ElementAt(num));
+                rooms.RemoveAt(num);
+            }
+            RemoveAll();
+            GameplayLoop();
         }
+
 
         public void GameplayLoop()
         {
             RemoveAll();
+
+            if (roomsWithKeys.Contains(lastRoomID))
+            {
+                Label key = new Label
+                {
+                    Name = "key_label",
+                    Text = "Hai trovato una chiave nell'ultima stanza!",
+                    AutoSize = true,
+                    Location = new Point(100, 100)
+                };
+                form.Controls.Add(key);
+                player.keys += 1;
+            }
+
+            Label keys = new Label
+            {
+                Name = "keys",
+                Text = $"Chiavi: {player.keys}",
+                AutoSize = true,
+                Location = new Point(800, 50),
+                Anchor = AnchorStyles.Right | AnchorStyles.Top,
+            };
+            form.Controls.Add(keys);
 
             onDoorSelectionScreen = true;
             Label instructions = new Label
@@ -126,12 +173,14 @@ namespace OverworldNS
             treasureRoom = new TreasureRoom();
             for (int i = 0; i < treasureRoom.Treasures.Count; i++)
             {
-                Button treasure_btn = new Button
+                PictureBox treasure_btn = new PictureBox
                 {
                     Name = "treasure_" + treasureRoom.Treasures[i].id,
                     Text = "Tesoro",
                     Location = new Point(50 + 100 * i, 100),
                     Size = new Size(50, 50),
+                    Image = Resources.tesoro,
+                    SizeMode = PictureBoxSizeMode.Zoom
                 };
                 treasure_btn.Click += new EventHandler(HandleClick);
 
@@ -395,65 +444,49 @@ namespace OverworldNS
             form.Controls.Add(quit);
         }
 
-        private void StartGame(object? sender, EventArgs e)
-        {
-            player = new Player();
-            progress = 0;
-            RemoveAll();
-            GameplayLoop();
-        }
-
         private void HandleClick(object? sender, EventArgs e)
         {
             if (sender is PictureBox)
             {
-                PictureBox door = (PictureBox)sender;
+                PictureBox pic = (PictureBox)sender;
 
-                if (door.Name.Contains("boss"))
+                if (pic.Name.Contains("door"))
                 {
-                    if (player.keys >= 3)
+                    PictureBox door = pic;
+                    if (door.Name.Contains("boss"))
                     {
-                        // genera la stanza del boss
+                        if (player.keys >= 3)
+                        {
+                            // genera la stanza del boss
+                            RemoveAll();
+                            CombatRoom();
+                        }
+                        else
+                        {
+                            // mostra messaggio che ti serve 3 chiavi
+                            Label noKeys = new Label
+                            {
+                                Name = "nokeys",
+                                Text = "Ti servono 3 chiavi per affrontare il Boss!",
+                                AutoSize = true,
+                                Location = new Point(100, 100),
+                                Anchor = AnchorStyles.Top | AnchorStyles.Left
+                            };
+                            form.Controls.Add(noKeys);
+                        }
                     }
                     else
                     {
-                        // mostra messaggio che ti serve 3 chiavi
+                        int id = Convert.ToInt32(door.Name.Split("_")[1]);
+                        openedDoors[id] = true;
+                        lastRoomID = id;
+                        GenerateRoom();
                     }
                 }
-                else
+                else if (pic.Name.Contains("treasure"))
                 {
-                    int id = Convert.ToInt32(door.Name.Split("_")[1]);
-                    openedDoors[id] = true;
-                    GenerateRoom();
-                }
-            }
-
-
-            int action = 0;
-
-            if (sender is Button)
-            {
-                Button button = (Button)sender;
-                if (button.Name == "attack_btn")
-                {
-                    action = 1;
-                }
-                else if (button.Name == "defence_btn")
-                {
-                    action = 2;
-                }
-                else if (button.Name == "special_attack_btn")
-                {
-                    action = 3;
-                }
-                else if (button.Name == "heal_btn")
-                {
-                    action = 4;
-                }
-                else if (button.Name.Contains("treasure"))
-                {
-                    Treasure treasure = treasureRoom.Treasures.Find(x => x.id == Convert.ToInt32(button.Name.Split("_")[1]));
-                    form.Controls.Remove(button);
+                    Treasure treasure = treasureRoom.Treasures.Find(x => x.id == Convert.ToInt32(pic.Name.Split("_")[1]));
+                    form.Controls.Remove(pic);
                     Action<Player>? post_open_effect = treasure.Open();
                     treasureRoom.Treasures.Remove(treasure);
                     if (post_open_effect != null)
@@ -480,8 +513,29 @@ namespace OverworldNS
                         RemoveAll();
                         CombatRoom();
                     }
+                }
+            }
 
-                    goto SkipToEnd;
+            else if (sender is Button)
+            {
+                int action = 0;
+
+                Button button = (Button)sender;
+                if (button.Name == "attack_btn")
+                {
+                    action = 1;
+                }
+                else if (button.Name == "defence_btn")
+                {
+                    action = 2;
+                }
+                else if (button.Name == "special_attack_btn")
+                {
+                    action = 3;
+                }
+                else if (button.Name == "heal_btn")
+                {
+                    action = 4;
                 }
 
                 int gameState = combatHandling.Turn(action);
@@ -515,7 +569,6 @@ namespace OverworldNS
                         throw new Exception("Invalid gameState");
                 }
             }
-        SkipToEnd:;
         }
     }
 }
