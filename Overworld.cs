@@ -21,6 +21,7 @@ namespace OverworldNS
         public bool onDoorSelectionScreen = false;
         private List<int> roomsWithKeys = new List<int>();
         private int lastRoomID = -1;
+        private bool isBoss = false;
 
         public Overworld(Form form)
         {
@@ -31,6 +32,7 @@ namespace OverworldNS
         {
             progress = 0;
             player = new Player();
+            player.keys += 3;
             currentScreen = 0;
             openedDoors = new bool[doorsCount];
             lastRoomID = -1;
@@ -55,6 +57,7 @@ namespace OverworldNS
         public void GameplayLoop()
         {
             RemoveAll();
+            onDoorSelectionScreen = true;
 
             if (roomsWithKeys.Contains(lastRoomID))
             {
@@ -79,7 +82,6 @@ namespace OverworldNS
             };
             form.Controls.Add(keys);
 
-            onDoorSelectionScreen = true;
             Label instructions = new Label
             {
                 Name = "instructions",
@@ -188,9 +190,9 @@ namespace OverworldNS
             }
         }
 
-        private void CombatRoom()
+        private void CombatRoom(bool isBoss = false)
         {
-            combatHandling = new CombatHandling(player, progress);
+            combatHandling = new CombatHandling(player, progress, isBoss);
 
             // setup interface
 
@@ -408,7 +410,21 @@ namespace OverworldNS
             }
         }
 
-        private void EndGame()
+        private void WinGame()
+        {
+            RemoveAll();
+            onDoorSelectionScreen = false;
+            Label win = new Label
+            {
+                Name = "win",
+                Text = $"Hai sconfitto il boss del dungeon!\nIl tuo punteggio: {doorsCount - progress}",
+                AutoSize = true,
+                Location = new Point(form.ClientSize.Width / 2 - 100, form.ClientSize.Height / 2 - 50),
+            };
+            form.Controls.Add(win);
+        }
+
+        private void LoseGame()
         {
             Label label = new Label
             {
@@ -459,7 +475,8 @@ namespace OverworldNS
                         {
                             // genera la stanza del boss
                             RemoveAll();
-                            CombatRoom();
+                            isBoss = true;
+                            CombatRoom(isBoss);
                         }
                         else
                         {
@@ -545,25 +562,32 @@ namespace OverworldNS
                     case 0:
                         break;
                     case 1:
-                        player.IncreaseHealthBy(player.maxHealth);
-
-                        RemoveAll();
-                        Label win = new Label
+                        if (isBoss)
                         {
-                            Location = new Point(200, 300),
-                            AutoSize = true,
-                            Text = "Hai vinto il combattimento"
-                        };
-                        form.Controls.Add(win);
-                        win.Update();
-                        Thread.Sleep(1000);
-                        RemoveAll();
+                            WinGame();
+                        }
+                        else
+                        {
+                            player.IncreaseHealthBy(player.maxHealth);
 
-                        GameplayLoop();
+                            RemoveAll();
+                            Label win = new Label
+                            {
+                                Location = new Point(200, 300),
+                                AutoSize = true,
+                                Text = "Hai vinto il combattimento"
+                            };
+                            form.Controls.Add(win);
+                            win.Update();
+                            Thread.Sleep(1000);
+                            RemoveAll();
+
+                            GameplayLoop();
+                        }
                         break;
                     case 2:
                         RemoveAll();
-                        EndGame();
+                        LoseGame();
                         break;
                     default:
                         throw new Exception("Invalid gameState");

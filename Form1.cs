@@ -35,23 +35,26 @@ namespace ReLoop
                 Close();
             }
 
-            if (e.KeyCode == Keys.Right)
+            if (overworld.onDoorSelectionScreen)
             {
-                overworld.currentScreen += 1;
-                if (overworld.currentScreen >= 5)
+                if (e.KeyCode == Keys.Right)
                 {
-                    overworld.currentScreen = 0;
+                    overworld.currentScreen += 1;
+                    if (overworld.currentScreen >= 5)
+                    {
+                        overworld.currentScreen = 0;
+                    }
                 }
-            }
-            if (e.KeyCode == Keys.Left)
-            {
-                overworld.currentScreen -= 1;
-                if (overworld.currentScreen < 0)
+                if (e.KeyCode == Keys.Left)
                 {
-                    overworld.currentScreen = 4;
+                    overworld.currentScreen -= 1;
+                    if (overworld.currentScreen < 0)
+                    {
+                        overworld.currentScreen = 4;
+                    }
                 }
+                overworld.GameplayLoop();
             }
-            overworld.GameplayLoop();
         }
     }
 }

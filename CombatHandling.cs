@@ -6,12 +6,14 @@ namespace CombatHandlingNS
     {
         private readonly int progress;
         private readonly Player player;
+        private readonly bool isBoss;
         public List<Enemy> enemies = new List<Enemy>();
 
-        public CombatHandling(Player player, int progress)
+        public CombatHandling(Player player, int progress, bool isBoss = false)
         {
             this.progress = progress;
             this.player = player;
+            this.isBoss = isBoss;
             GenerateEnemies();
         }
 
@@ -21,6 +23,12 @@ namespace CombatHandlingNS
             int numberOfEnemies = random.Next(1, 4);
 
             double SCALING = Math.Log2(progress) + 1;
+
+            if (isBoss)
+            {
+                numberOfEnemies = 1;
+                SCALING *= 1.5;
+            }
 
             for (int i = 0; i < numberOfEnemies; i++)
             {
