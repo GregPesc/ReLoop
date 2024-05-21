@@ -22,6 +22,7 @@ namespace OverworldNS
         private List<int> roomsWithKeys = new List<int>();
         private int lastRoomID = -1;
         private bool isBoss = false;
+        public bool onStory = false;
 
         public Overworld(Form form)
         {
@@ -52,25 +53,30 @@ namespace OverworldNS
             GameplayLoop();
         }
 
+        private void ShowStory()
+        {
+            onDoorSelectionScreen = false;
+            onStory = true;
+            RemoveAll();
+            form.BackColor = Color.Black;
+            form.ForeColor = Color.White;
+            Label story = new Label
+            {
+                Name = "story",
+                Text = "sample text\nPremi SPAZIO per continuare",
+                AutoSize = true,
+                Location = new Point(50, 50)
+            };
+            form.Controls.Add(story);
+        }
 
         public void GameplayLoop()
         {
             RemoveAll();
             onDoorSelectionScreen = true;
-
-            if (roomsWithKeys.Contains(lastRoomID))
-            {
-                Label key = new Label
-                {
-                    Name = "key_label",
-                    Text = "Hai trovato una chiave nell'ultima stanza!",
-                    AutoSize = true,
-                    Location = new Point(100, 100)
-                };
-                form.Controls.Add(key);
-                player.keys += 1;
-                lastRoomID = -1;
-            }
+            onStory = false;
+            form.BackColor = Color.WhiteSmoke;
+            form.ForeColor = Color.Black;
 
             Label keys = new Label
             {
@@ -148,6 +154,24 @@ namespace OverworldNS
                 }
             }
             form.Controls.Add(doorLayout);
+
+            if (roomsWithKeys.Contains(lastRoomID))
+            {
+                Label key = new Label
+                {
+                    Name = "key_label",
+                    Text = "Hai trovato una chiave nell'ultima stanza!",
+                    AutoSize = true,
+                    Location = new Point(100, 100)
+                };
+                form.Controls.Add(key);
+                player.keys += 1;
+                lastRoomID = -1;
+                form.Update();
+                Thread.Sleep(2000);
+                ShowStory();
+                return;
+            }
         }
 
         private void GenerateRoom()

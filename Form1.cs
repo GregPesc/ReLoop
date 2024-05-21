@@ -55,6 +55,10 @@ namespace ReLoop
                 }
                 overworld.GameplayLoop();
             }
+            else if (e.KeyCode == Keys.Space && overworld.onStory)
+            {
+                overworld.GameplayLoop();
+            }
         }
     }
 }
