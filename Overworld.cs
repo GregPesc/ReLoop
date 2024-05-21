@@ -55,6 +55,7 @@ namespace OverworldNS
 
         private void ShowStory()
         {
+            // scegli storia in base a numero di chiavi da file json(?)
             onDoorSelectionScreen = false;
             onStory = true;
             RemoveAll();
