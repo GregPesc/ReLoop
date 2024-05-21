@@ -69,6 +69,7 @@ namespace OverworldNS
                 };
                 form.Controls.Add(key);
                 player.keys += 1;
+                lastRoomID = -1;
             }
 
             Label keys = new Label
@@ -511,7 +512,7 @@ namespace OverworldNS
                         {
                             Name = "item_lbl",
                             Text = "Hai trovato un oggetto che ti aumenta una statistica!",
-                            Location = new Point(200, 200),
+                            Location = new Point(200, 300),
                             AutoSize = true,
                         };
                         form.Controls.Add(item);
