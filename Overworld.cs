@@ -24,7 +24,6 @@ namespace OverworldNS
         private int lastRoomID = -1;
         private bool isBoss = false;
         public bool onStory = false;
-        private bool intro = false;
 
         public Overworld(Form form)
         {
@@ -39,90 +38,37 @@ namespace OverworldNS
             RemoveAll();
             form.BackColor = Color.Black;
             form.ForeColor = Color.White;
-            if (player.keys == 0)
+            string story_text;
+            switch (player.keys)
             {
-                string datab_0 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_0.txt";
-                StreamReader File;
-                File = new StreamReader(datab_0);
-                string line = File.ReadLine();
-                string line2 = File.ReadLine();
-                Label story = new Label
-                {
-                    Name = "story",
-                    Text = line + "\n" + line2 + "\n\nPremi SPAZIO per continuare",
-                    AutoSize = true,
-                    Location = new Point(50, 50)
-                };
-                form.Controls.Add(story);
-                File.Close();
+                case 0:
+                    story_text = Resources.story_0;
+                    break;
+                case 1:
+                    story_text = Resources.story_1;
+                    break;
+                case 2:
+                    story_text = Resources.story_2;
+                    break;
+                case 3:
+                    story_text = Resources.story_3;
+                    break;
+                default:
+                    throw new Exception("invalid story");
             }
-            else
+
+            Label story = new Label
             {
-                if (player.keys == 1)
-                {
-                    string datab_1 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_1.txt";
-                    StreamReader File;
-                    File = new StreamReader(datab_1);
-                    string line = File.ReadLine();
-                    string line2 = File.ReadLine();
-                    string line3 = File.ReadLine();
-                    Label story = new Label
-                    {
-                        Name = "story",
-                        Text = line + "\n" + line2 + "\n" + line3 + "\n\nPremi SPAZIO per continuare",
-                        AutoSize = true,
-                        Location = new Point(50, 50)
-                    };
-                    form.Controls.Add(story);
-                    File.Close();
-                }
-                else
-                {
-                    if (player.keys == 2)
-                    {
-                        string datab_2 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_2.txt";
-                        StreamReader File;
-                        File = new StreamReader(datab_2);
-                        string line = File.ReadLine();
-                        string line2 = File.ReadLine();
-                        string line3 = File.ReadLine();
-                        Label story = new Label
-                        {
-                            Name = "story",
-                            Text = line + "\n" + line2 + "\n" + line3 + "\n\nPremi SPAZIO per continuare",
-                            AutoSize = true,
-                            Location = new Point(50, 50)
-                        };
-                        form.Controls.Add(story);
-                        File.Close();
-                    }
-                    else
-                    {
-                        if (player.keys == 3)
-                        {
-                            string datab_3 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_3.txt";
-                            StreamReader File;
-                            File = new StreamReader(datab_3);
-                            string line = File.ReadLine();
-                            string line2 = File.ReadLine();
-                            string line3 = File.ReadLine();
-                            string line4 = File.ReadLine();
-                            Label story = new Label
-                            {
-                                Name = "story",
-                                Text = line + "\n" + line2 + "\n" + line3 + "\n" + line4 + "\n\nPremi SPAZIO per continuare",
-                                AutoSize = true,
-                                Location = new Point(50, 50)
-                            };
-                            form.Controls.Add(story);
-                            File.Close();
-                        }
-                    }
-                }
-            }
+                Name = "story",
+                Text = story_text + "\n\nPremi SPAZIO per continuare",
+                AutoSize = true,
+                Location = new Point(50, 50)
+            };
+            form.Controls.Add(story);
 
 
         }
+
         private void StartGame(object? sender, EventArgs e)
         {
             progress = 0;
@@ -137,20 +83,16 @@ namespace OverworldNS
             }
 
             Random rnd = new Random();
+            roomsWithKeys.Clear();
             for (int i = 0; i < 3; i++)
             {
                 int num = rnd.Next(rooms.Count);
                 roomsWithKeys.Add(rooms.ElementAt(num));
                 rooms.RemoveAt(num);
             }
-            Thread.Sleep(2000);
             ShowStory();
             return;
-            RemoveAll();
-            GameplayLoop();
         }
-
-
 
         public void GameplayLoop()
         {
@@ -252,7 +194,7 @@ namespace OverworldNS
                 if (player.keys > 3) { player.keys = 3; }
                 lastRoomID = -1;
                 form.Update();
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 ShowStory();
                 return;
             }
@@ -525,7 +467,7 @@ namespace OverworldNS
             Label win = new Label
             {
                 Name = "win",
-                Text = $"Hai sconfitto il boss del dungeon!\nIl tuo punteggio: {doorsCount - progress}",
+                Text = $"Hai sconfitto il boss del dungeon!\nIl tuo punteggio: {doorsCount - progress}\n\nPremi ESC per uscire",
                 AutoSize = true,
                 Location = new Point(form.ClientSize.Width / 2 - 100, form.ClientSize.Height / 2 - 50),
             };

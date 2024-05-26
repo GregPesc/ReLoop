@@ -1,0 +1,3 @@
+Ringo capisce che qualcuno o qualcosa lo sta intrappolando in quello
+strano corridoio e che ogni volta che controlla una stanza di esso,
+si ritroverà sempre nel corridoio venendo così intrappolato in un loop.
