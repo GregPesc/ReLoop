@@ -1,6 +1,7 @@
 using EntityNS;
 using CombatHandlingNS;
 using ReLoop.Properties;
+using System.Diagnostics.Eventing.Reader;
 
 namespace OverworldNS
 {
@@ -23,12 +24,105 @@ namespace OverworldNS
         private int lastRoomID = -1;
         private bool isBoss = false;
         public bool onStory = false;
+        private bool intro = false;
 
         public Overworld(Form form)
         {
             this.form = form;
         }
 
+        private void ShowStory()
+        {
+            // scegli storia in base a numero di chiavi da file json(?)
+            onDoorSelectionScreen = false;
+            onStory = true;
+            RemoveAll();
+            form.BackColor = Color.Black;
+            form.ForeColor = Color.White;
+            if (player.keys == 0)
+            {
+                string datab_0 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_0.txt";
+                StreamReader File;
+                File = new StreamReader(datab_0);
+                string line = File.ReadLine();
+                string line2 = File.ReadLine();
+                Label story = new Label
+                {
+                    Name = "story",
+                    Text = line + "\n" + line2 + "\n\nPremi SPAZIO per continuare",
+                    AutoSize = true,
+                    Location = new Point(50, 50)
+                };
+                form.Controls.Add(story);
+                File.Close();
+            }
+            else
+            {
+                if (player.keys == 1)
+                {
+                    string datab_1 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_1.txt";
+                    StreamReader File;
+                    File = new StreamReader(datab_1);
+                    string line = File.ReadLine();
+                    string line2 = File.ReadLine();
+                    string line3 = File.ReadLine();
+                    Label story = new Label
+                    {
+                        Name = "story",
+                        Text = line + "\n" + line2 + "\n" + line3 + "\n\nPremi SPAZIO per continuare",
+                        AutoSize = true,
+                        Location = new Point(50, 50)
+                    };
+                    form.Controls.Add(story);
+                    File.Close();
+                }
+                else
+                {
+                    if (player.keys == 2)
+                    {
+                        string datab_2 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_2.txt";
+                        StreamReader File;
+                        File = new StreamReader(datab_2);
+                        string line = File.ReadLine();
+                        string line2 = File.ReadLine();
+                        string line3 = File.ReadLine();
+                        Label story = new Label
+                        {
+                            Name = "story",
+                            Text = line + "\n" + line2 + "\n" + line3 + "\n\nPremi SPAZIO per continuare",
+                            AutoSize = true,
+                            Location = new Point(50, 50)
+                        };
+                        form.Controls.Add(story);
+                        File.Close();
+                    }
+                    else
+                    {
+                        if (player.keys == 3)
+                        {
+                            string datab_3 = @"C:\Users\Tommaso\Desktop\ReLoop-master\story_3.txt";
+                            StreamReader File;
+                            File = new StreamReader(datab_3);
+                            string line = File.ReadLine();
+                            string line2 = File.ReadLine();
+                            string line3 = File.ReadLine();
+                            string line4 = File.ReadLine();
+                            Label story = new Label
+                            {
+                                Name = "story",
+                                Text = line + "\n" + line2 + "\n" + line3 + "\n" + line4 + "\n\nPremi SPAZIO per continuare",
+                                AutoSize = true,
+                                Location = new Point(50, 50)
+                            };
+                            form.Controls.Add(story);
+                            File.Close();
+                        }
+                    }
+                }
+            }
+
+
+        }
         private void StartGame(object? sender, EventArgs e)
         {
             progress = 0;
@@ -49,27 +143,14 @@ namespace OverworldNS
                 roomsWithKeys.Add(rooms.ElementAt(num));
                 rooms.RemoveAt(num);
             }
+            Thread.Sleep(2000);
+            ShowStory();
+            return;
             RemoveAll();
             GameplayLoop();
         }
 
-        private void ShowStory()
-        {
-            // scegli storia in base a numero di chiavi da file json(?)
-            onDoorSelectionScreen = false;
-            onStory = true;
-            RemoveAll();
-            form.BackColor = Color.Black;
-            form.ForeColor = Color.White;
-            Label story = new Label
-            {
-                Name = "story",
-                Text = "sample text\nPremi SPAZIO per continuare",
-                AutoSize = true,
-                Location = new Point(50, 50)
-            };
-            form.Controls.Add(story);
-        }
+
 
         public void GameplayLoop()
         {
@@ -78,6 +159,7 @@ namespace OverworldNS
             onStory = false;
             form.BackColor = Color.WhiteSmoke;
             form.ForeColor = Color.Black;
+
 
             Label keys = new Label
             {
@@ -167,6 +249,7 @@ namespace OverworldNS
                 };
                 form.Controls.Add(key);
                 player.keys += 1;
+                if (player.keys > 3) { player.keys = 3; }
                 lastRoomID = -1;
                 form.Update();
                 Thread.Sleep(2000);
