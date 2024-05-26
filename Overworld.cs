@@ -1,7 +1,6 @@
 using EntityNS;
 using CombatHandlingNS;
 using ReLoop.Properties;
-using System.Diagnostics.Eventing.Reader;
 
 namespace OverworldNS
 {
